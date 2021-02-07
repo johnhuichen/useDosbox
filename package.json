@@ -6,7 +6,7 @@
   "repository": "https://github.com/johnhuichen/useDosbox",
   "main": "dist/index.js",
   "scripts": {
-    "build": "rollup -c",
+    "build": "rollup -c && cp ./public/* ./dist/",
     "start": "rollup -c -w",
     "test": "jest"
   },

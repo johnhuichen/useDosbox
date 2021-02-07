@@ -6,6 +6,7 @@ import { noop, fetchFile, formatBytes, RequestEvent } from "./utils";
 interface UseDosboxProps {
   canvasRef: React.RefObject<HTMLCanvasElement>;
   gameFile: string;
+  dosboxUrl: string;
 }
 
 interface UseDosboxState {
@@ -48,10 +49,6 @@ declare global {
 }
 
 const logger = (msg: string) => console.log(msg);
-
-// TODO
-// server this file and mem file over the cdn for production
-const DOSBOX_JS_URL = "/dosbox-sync.js";
 
 function getBrowserFSConfig({
   gameName,
@@ -150,10 +147,10 @@ async function updateModule({
   };
 }
 
-function addDosboxScript() {
+function addDosboxScript({ dosboxUrl }: { dosboxUrl: string }): void {
   const script = document.createElement("script");
 
-  script.src = DOSBOX_JS_URL;
+  script.src = dosboxUrl;
   script.async = true;
 
   document.body.appendChild(script);
@@ -184,7 +181,11 @@ function reducer(state: UseDosboxState, action: UseDosboxAction) {
   }
 }
 
-function useDosbox({ canvasRef, gameFile }: UseDosboxProps): UseDosboxData {
+function useDosbox({
+  canvasRef,
+  gameFile,
+  dosboxUrl,
+}: UseDosboxProps): UseDosboxData {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const startDosbox = useCallback(async () => {
@@ -194,14 +195,14 @@ function useDosbox({ canvasRef, gameFile }: UseDosboxProps): UseDosboxData {
         dispatch({ type: "SET_LOADING" });
 
         await updateModule({ canvas, gameFile, dispatch });
-        addDosboxScript();
+        addDosboxScript({ dosboxUrl });
 
         dispatch({ type: "SET_READY" });
       } catch {
         dispatch({ type: "RESET" });
       }
     }
-  }, [canvasRef, gameFile]);
+  }, [canvasRef, gameFile, dosboxUrl]);
 
   const stopDosbox = useCallback(() => {
     window.location.reload(false);
