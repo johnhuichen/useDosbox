@@ -1,4 +1,4 @@
-# a React Hook to run Dosbox on browser
+# a React hook for Dosbox
 
 ## Quick start
 
@@ -93,8 +93,8 @@ e.g. 50
 
 ## Can I save games?
 
-Yes, useDosbox uses Browserfs to store game save files in browser IndexedDB.
+Yes, useDosbox uses Browserfs to store game save files in IndexedDB.
 
 ## How can I leverage dosbox.conf to customize each game's running environment?
 
-useDosbox will try to find dosbox.conf file in the root location of game zip file. If the dosbox.conf exists, useDosbox will load dosbox using whatever configuration it specifies.
+useDosbox will try to find dosbox.conf in the root directory of game zip. If a dosbox.conf exists, useDosbox will load dosbox using whatever configuration it specifies.
