@@ -1,7 +1,7 @@
-import { useReducer, useCallback } from 'react';
-import * as BrowserFS from 'browserfs';
+import { useReducer, useCallback } from "react";
+import * as BrowserFS from "browserfs";
 
-import { noop, fetchFile, formatBytes, RequestEvent } from './utils';
+import { noop, fetchFile, formatBytes, RequestEvent } from "./utils";
 
 interface UseDosboxProps {
   canvasRef: React.RefObject<HTMLCanvasElement>;
@@ -51,24 +51,30 @@ const logger = (msg: string) => console.log(msg);
 
 // TODO
 // server this file and mem file over the cdn for production
-const DOSBOX_JS_URL = '/dosbox-sync.js';
+const DOSBOX_JS_URL = "/dosbox-sync.js";
 
-function getBrowserFSConfig({ gameName, zipData }: { gameName: string; zipData: Buffer }) {
+function getBrowserFSConfig({
+  gameName,
+  zipData,
+}: {
+  gameName: string;
+  zipData: Buffer;
+}) {
   const writable = {
-    fs: 'AsyncMirror',
+    fs: "AsyncMirror",
     options: {
-      sync: { fs: 'InMemory' },
+      sync: { fs: "InMemory" },
       async: {
-        fs: 'IndexedDB',
+        fs: "IndexedDB",
         options: { storeName: `gamenoir-${gameName}` },
       },
     },
   };
   const readable = {
-    fs: 'MountableFileSystem',
+    fs: "MountableFileSystem",
     options: {
-      '/c': {
-        fs: 'ZipFS',
+      "/c": {
+        fs: "ZipFS",
         options: {
           zipData,
         },
@@ -76,7 +82,7 @@ function getBrowserFSConfig({ gameName, zipData }: { gameName: string; zipData: 
     },
   };
   return {
-    fs: 'OverlayFS',
+    fs: "OverlayFS",
     options: {
       writable,
       readable,
@@ -86,10 +92,10 @@ function getBrowserFSConfig({ gameName, zipData }: { gameName: string; zipData: 
 
 function browserFSCallback() {
   try {
-    const fs = BrowserFS.BFSRequire('fs');
-    fs.writeFileSync('/dosbox.conf', fs.readFileSync('/c/dosbox.conf'));
+    const fs = BrowserFS.BFSRequire("fs");
+    fs.writeFileSync("/dosbox.conf", fs.readFileSync("/c/dosbox.conf"));
   } catch (error) {
-    console.log('Error writing dosbox conf', error);
+    console.log("Error writing dosbox conf", error);
   }
 }
 
@@ -111,7 +117,7 @@ async function updateModule({
     const percentage = Math.floor((loaded / total) * 100);
 
     dispatch({
-      type: 'SET_LOADING_DETAILS',
+      type: "SET_LOADING_DETAILS",
       totalSize: formatBytes(total),
       loadedSize: formatBytes(loaded),
       percentage,
@@ -121,14 +127,14 @@ async function updateModule({
     onProgress,
     onError: noop,
   });
-  const zipData = BrowserFS.BFSRequire('buffer').Buffer.from(arrayBuffer);
-  const gameName = gameFile.replace(/\//, '').replace(/\.zip$/, '');
+  const zipData = BrowserFS.BFSRequire("buffer").Buffer.from(arrayBuffer);
+  const gameName = gameFile.replace(/\//, "").replace(/\.zip$/, "");
   const browserFSConfig = getBrowserFSConfig({ gameName, zipData });
 
   BrowserFS.configure(browserFSConfig, browserFSCallback);
 
   window.Module = {
-    arguments: ['-conf', '/emulator/dosbox.conf'],
+    arguments: ["-conf", "/emulator/dosbox.conf"],
     screenIsReadOnly: true,
     print: logger,
     printErr: logger,
@@ -137,15 +143,15 @@ async function updateModule({
     locateFile,
     preInit: () => {
       const BFS = new BrowserFS.EmscriptenFS();
-      FS.mkdir('/emulator');
-      FS.mount(BFS, { root: '/' }, '/emulator');
+      FS.mkdir("/emulator");
+      FS.mount(BFS, { root: "/" }, "/emulator");
     },
     preRun: noop,
   };
 }
 
 function addDosboxScript() {
-  const script = document.createElement('script');
+  const script = document.createElement("script");
 
   script.src = DOSBOX_JS_URL;
   script.async = true;
@@ -160,39 +166,39 @@ const initialState = {
 
 function reducer(state: UseDosboxState, action: UseDosboxAction) {
   switch (action.type) {
-    case 'SET_LOADING':
+    case "SET_LOADING":
       return { ...state, isDosboxLoading: true };
-    case 'SET_LOADING_DETAILS':
+    case "SET_LOADING_DETAILS":
       return {
         ...state,
         totalSize: action.totalSize,
         loadedSize: action.loadedSize,
         percentage: action.percentage,
       };
-    case 'SET_READY':
+    case "SET_READY":
       return { ...state, isDosboxLoading: false, isDosboxReady: true };
-    case 'RESET':
+    case "RESET":
       return initialState;
     default:
       return state;
   }
 }
 
-export default function useDosbox({ canvasRef, gameFile }: UseDosboxProps): UseDosboxData {
+function useDosbox({ canvasRef, gameFile }: UseDosboxProps): UseDosboxData {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const startDosbox = useCallback(async () => {
     const canvas = canvasRef.current;
     if (canvas) {
       try {
-        dispatch({ type: 'SET_LOADING' });
+        dispatch({ type: "SET_LOADING" });
 
         await updateModule({ canvas, gameFile, dispatch });
         addDosboxScript();
 
-        dispatch({ type: 'SET_READY' });
+        dispatch({ type: "SET_READY" });
       } catch {
-        dispatch({ type: 'RESET' });
+        dispatch({ type: "RESET" });
       }
     }
   }, [canvasRef, gameFile]);
@@ -203,3 +209,5 @@ export default function useDosbox({ canvasRef, gameFile }: UseDosboxProps): UseD
 
   return { ...state, startDosbox, stopDosbox };
 }
+
+export { useDosbox };
