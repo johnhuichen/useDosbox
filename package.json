@@ -1,6 +1,6 @@
 {
   "name": "usedosbox",
-  "version": "1.0.4",
+  "version": "1.0.9",
   "description": "react hook for running dosbox webassembly binary",
   "author": "johnhuichen",
   "repository": "https://github.com/johnhuichen/useDosbox",
