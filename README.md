@@ -3,7 +3,9 @@
 ## Quick start
 
 1.host dosbox-sync.js and dosbox.html.mem (from the public folder) online. Both files need to be hosted in the same location.
+
 1.host dosgame file online as well
+
 1.install package
 
 ```shell
