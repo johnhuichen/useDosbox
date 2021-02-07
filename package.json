@@ -6,7 +6,7 @@
   "repository": "https://github.com/johnhuichen/useDosbox",
   "main": "dist/index.js",
   "scripts": {
-    "build": "rollup -c && cp ./public/* ./dist/",
+    "build": "rollup -c",
     "start": "rollup -c -w",
     "test": "jest"
   },
@@ -48,7 +48,8 @@
     "react",
     "react hooks",
     "typescript",
-    "npm"
+    "npm",
+    "dosbox"
   ],
   "dependencies": {
     "browserfs": "^1.4.3"
