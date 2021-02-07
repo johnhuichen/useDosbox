@@ -2,11 +2,11 @@
 
 ## Quick start
 
-1.host dosbox-sync.js and dosbox.html.mem (from the public folder) online. Both files need to be hosted in the same location.
+1. host dosbox-sync.js and dosbox.html.mem (from the public folder) online. Both files need to be hosted in the same location.
 
-1.host dosgame file online as well
+2. host dosgame file online as well
 
-1.install package
+3. install package
 
 ```shell
 npm install usedosbox
@@ -14,7 +14,7 @@ or
 yarn add usedosbox
 ```
 
-1.in your own react component
+4. update your react component
 
 ```typescript
 import React, { createRef, useEffect } from "react";
