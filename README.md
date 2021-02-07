@@ -6,7 +6,7 @@
 1.host dosgame file online as well
 1.install package
 
-```
+```shell
 npm install usedosbox
 or
 yarn add usedosbox
@@ -14,8 +14,8 @@ yarn add usedosbox
 
 1.in your own react component
 
-```
-import React, { useRef, useEffect } from "react"
+```typescript
+import React, { createRef, useEffect } from "react";
 import { useDosbox } from "usedosbox";
 
 function MyComponent() {
@@ -30,7 +30,7 @@ function MyComponent() {
     percentage,
   } = useDosbox({
     canvasRef,
-    gameFile: "https://example.com/path/to/gamefile.zip",,
+    gameFile: "https://example.com/path/to/gamefile.zip",
     dosboxUrl: "https://example.com/path/to/dosbox-sync.js",
   });
 
@@ -40,42 +40,61 @@ function MyComponent() {
     };
   }, [stopDosbox]);
 
-  return <>
-    <button type="button" onClick={startDosbox}>Start</button>
-    <canvas id="canvas" ref={canvasRef} styles={{ width: "600px", height: "400px" }} />
-  </>
+  return (
+    <>
+      <button type="button" onClick={startDosbox}>
+        Start
+      </button>
+      <canvas
+        id="canvas"
+        ref={canvasRef}
+        styles={{ width: "600px", height: "400px" }}
+      />
+    </>
+  );
 }
 ```
 
 ## APIs
 
-### startDosbox
+### startDosbox: () => void;
 
-startDosbox() starts dosbox
+starts dosbox
 
-### stopDosbox
+### stopDosbox: () => void;
 
-stopDosbox() stops dosbox, recommended for page cleanup
+stops dosbox, recommended for page cleanup
 
-### isDosboxLoading
+### isDosboxLoading: boolean
 
-boolean value giving dosbox loading state
+true: dosbox is loading; false: dosbox is not loading
 
-### isDosboxReady
+### isDosboxReady: boolean
 
-boolean value giving dosbox ready state
+true: dosbox is ready; false: dosbox is not ready
 
-### loadedSize
+### loadedSize: string
 
-a string representing how much game file buffer has been downloaded
+how much game file buffer has been downloaded
+
 e.g. 6kB
 
-### totalSize
+### totalSize: string
 
-a string representing how large the final game file is
+how large the final game file is
+
 e.g. 104MB
 
-### percentage
+### percentage: number
 
-a number representing percentage of game file download
+percentage of game file download
+
 e.g. 50
+
+## Can I save games?
+
+Yes, useDosbox uses Browserfs to store game save files in browser IndexedDB.
+
+## How can I leverage dosbox.conf to customize each game's running environment?
+
+useDosbox will try to find dosbox.conf file in the root location of game zip file. If the dosbox.conf exists, useDosbox will load dosbox using whatever configuration it specifies.
